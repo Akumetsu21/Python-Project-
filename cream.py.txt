@@ -1,0 +1,62 @@
+import random
+import streamlit as st
+
+emoji_quiz = {
+    "🐍📜": "python script",
+    "🔄🔁": "loop",
+    "📦📂": "module",
+    "📦📦📦": "package",
+    "🖥️➡️📜": "interpreter",
+    "🎭🌀": "decorator",
+    "🆕🔤🔢": "variable",
+    "🚪🔙": "return statement",
+    "🚨❌🐍": "syntax error",
+    "🏗️📏": "data type",
+    "🔢🔀🔠": "type casting",
+    "📊📈": "matplotlib",
+    "🐼📊": "pandas",
+    "⚡🔣➡️🔢": "lambda function",
+    "🚦✅❌": "if-else statement",
+    "✂️📜": "slicing",
+    "📢🔤": "print statement",
+    "💾📝": "file handling",
+    "🛑⚠️🎭": "exception handling",
+    "🔒🐍": "virtual environment"
+}
+
+st.title("🐍 Python Emoji Quiz Game 🎉")
+
+if "score" not in st.session_state:
+    st.session_state.score = 0
+if "question_index" not in st.session_state:
+    st.session_state.question_index = 0
+if "shuffled_questions" not in st.session_state:
+    st.session_state.shuffled_questions = random.sample(list(emoji_quiz.items()), 5)
+if "answered" not in st.session_state:
+    st.session_state.answered = False
+
+if st.session_state.question_index < 5:
+    emoji, answer = st.session_state.shuffled_questions[st.session_state.question_index]
+    st.subheader(f"Guess the Python term: {emoji}")
+    user_guess = st.text_input("Your answer: ", key=f"input_{st.session_state.question_index}").strip().lower()
+    
+    if st.button("Submit") and not st.session_state.answered:
+        if user_guess == answer:
+            st.success("✅ Correct!")
+            st.session_state.score += 1
+        else:
+            st.error(f"❌ Wrong! The correct answer was: {answer}")
+        st.session_state.answered = True
+    
+    if st.session_state.answered and st.button("Next"):
+        st.session_state.question_index += 1
+        st.session_state.answered = False
+        st.rerun()
+else:
+    st.subheader(f"Game Over! Your final score is {st.session_state.score}/5 🎉")
+    if st.button("Play Again"):
+        st.session_state.score = 0
+        st.session_state.question_index = 0
+        st.session_state.shuffled_questions = random.sample(list(emoji_quiz.items()), 5)
+        st.session_state.answered = False
+        st.rerun()
